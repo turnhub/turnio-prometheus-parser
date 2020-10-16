@@ -9,8 +9,7 @@ defmodule PrometheusParser.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      description: description(),
-      licenses: ["Apache-2.0"]
+      description: description()
     ]
   end
 
