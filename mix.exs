@@ -8,7 +8,8 @@ defmodule PrometheusParser.MixProject do
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      organization: "turnio"
+      organization: "turnio",
+      licenses: ["Apache-2.0"]
     ]
   end
 
