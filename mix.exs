@@ -8,8 +8,15 @@ defmodule PrometheusParser.MixProject do
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      organization: "turnio",
+      package: package(),
       licenses: ["Apache-2.0"]
+    ]
+  end
+
+  defp package() do
+    [
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/turnhub/turnio-prometheus-parser"}
     ]
   end
 
