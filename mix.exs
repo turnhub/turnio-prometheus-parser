@@ -9,6 +9,7 @@ defmodule PrometheusParser.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
+      description: description(),
       licenses: ["Apache-2.0"]
     ]
   end
@@ -18,6 +19,10 @@ defmodule PrometheusParser.MixProject do
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => "https://github.com/turnhub/turnio-prometheus-parser"}
     ]
+  end
+
+  defp description() do
+    "A nimble_parsec parser for parsing the Prometheus text format."
   end
 
   # Run "mix help compile.app" to learn about applications.
