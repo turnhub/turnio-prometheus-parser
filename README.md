@@ -3,7 +3,7 @@
 A simple parser for the Prometheus text format built with [`nimble_parsec`](https://hex.pm/packages/nimble_parsec).
 Likely incomplete but works well enough for our use case.
 
-````elixir
+```elixir
 iex(1)> PrometheusParser.parse("# Some documenting text")
 %PrometheusParser.Line{
                documentation: "Some documenting text",
@@ -59,7 +59,7 @@ def deps do
     {:prometheus_parser, "~> 0.1.0"}
   ]
 end
-````
+```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
