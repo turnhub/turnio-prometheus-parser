@@ -90,6 +90,20 @@ defmodule PrometheusParserTest do
               }}
   end
 
+  test "parse entry with key and value with colons and full stops" do
+    assert parse("api_requests_coreapp_duration_ms_sum{app=\"127.0.0.1:6250\"} 122") ==
+             {:ok,
+              %PrometheusParser.Line{
+                documentation: nil,
+                label: "api_requests_coreapp_duration_ms_sum",
+                line_type: "ENTRY",
+                pairs: [{"app", "127.0.0.1:6250"}],
+                timestamp: nil,
+                type: nil,
+                value: "122"
+              }}
+  end
+
   test "write entry with key and value" do
     assert to_string(%PrometheusParser.Line{
              documentation: nil,
