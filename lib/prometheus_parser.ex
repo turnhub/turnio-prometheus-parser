@@ -141,6 +141,11 @@ defmodule PrometheusParser do
     |> ignore(string(" "))
     |> concat(prom_integer |> tag(:timestamp))
 
+  unsupported =
+    empty()
+    |> line()
+    |> tag(:unsupported)
+
   defparsec(
     :parse_line,
     choice([
@@ -150,7 +155,8 @@ defmodule PrometheusParser do
       prom_entry_with_timestamp,
       prom_entry,
       prom_entry_with_key_and_value_and_timestamp,
-      prom_entry_with_key_and_value
+      prom_entry_with_key_and_value,
+      unsupported
     ])
   )
 
@@ -167,37 +173,43 @@ defmodule PrometheusParser do
     |> format()
   end
 
+  def format({:ok, [{:unsupported, _}], line, %{} = _context, _line, _offset}),
+    do: {:error, "Unsupported syntax: #{inspect(line)}"}
+
   def format({:ok, acc, "" = _rest, %{} = _context, _line, _offset}),
     do: format(acc)
 
   def format(acc) when is_list(acc) do
-    acc
-    |> Enum.reduce(%Line{}, fn item, acc ->
-      case item do
-        {:comment, ["#"]} ->
-          %{acc | line_type: "COMMENT"}
+    line =
+      acc
+      |> Enum.reduce(%Line{}, fn item, acc ->
+        case item do
+          {:comment, ["#"]} ->
+            %{acc | line_type: "COMMENT"}
 
-        {:prom_label, [{:help, ["HELP"]}, label]} ->
-          %{acc | line_type: "HELP", label: label}
+          {:prom_label, [{:help, ["HELP"]}, label]} ->
+            %{acc | line_type: "HELP", label: label}
 
-        {:prom_label, [label]} ->
-          %{acc | line_type: "ENTRY", label: label}
+          {:prom_label, [label]} ->
+            %{acc | line_type: "ENTRY", label: label}
 
-        {:type, [{:type, ["TYPE"]}, label, type]} ->
-          %{acc | line_type: "TYPE", label: label, type: type}
+          {:type, [{:type, ["TYPE"]}, label, type]} ->
+            %{acc | line_type: "TYPE", label: label, type: type}
 
-        {:documentation, [documentation]} ->
-          %{acc | documentation: documentation}
+          {:documentation, [documentation]} ->
+            %{acc | documentation: documentation}
 
-        {:pair_value, [{:pair_key, [key]}, value]} ->
-          %{acc | pairs: acc.pairs ++ [{key, value}]}
+          {:pair_value, [{:pair_key, [key]}, value]} ->
+            %{acc | pairs: acc.pairs ++ [{key, value}]}
 
-        {:entry_value, [value]} ->
-          %{acc | value: value}
+          {:entry_value, [value]} ->
+            %{acc | value: value}
 
-        {:timestamp, [timestamp]} ->
-          %{acc | timestamp: timestamp}
-      end
-    end)
+          {:timestamp, [timestamp]} ->
+            %{acc | timestamp: timestamp}
+        end
+      end)
+
+    {:ok, line}
   end
 end
