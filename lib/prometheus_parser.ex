@@ -38,6 +38,26 @@ defimpl String.Chars, for: PrometheusParser.Line do
   def to_string(%{
         line_type: "ENTRY",
         label: label,
+        pairs: [],
+        value: value,
+        timestamp: timestamp
+      })
+      when not is_nil(timestamp) do
+    "#{label} #{value} #{timestamp}"
+  end
+
+  def to_string(%{
+        line_type: "ENTRY",
+        label: label,
+        pairs: [],
+        value: value
+      }) do
+    "#{label} #{value}"
+  end
+
+  def to_string(%{
+        line_type: "ENTRY",
+        label: label,
         pairs: pairs,
         value: value
       }) do
@@ -95,6 +115,17 @@ defmodule PrometheusParser do
   prom_entry =
     prom_label
     |> tag(:prom_label)
+    |> ignore(string(" "))
+    |> concat(prom_integer |> tag(:entry_value))
+
+  prom_entry_with_timestamp =
+    prom_entry
+    |> ignore(string(" "))
+    |> concat(prom_integer |> tag(:timestamp))
+
+  prom_entry_with_key_and_value =
+    prom_label
+    |> tag(:prom_label)
     |> ignore(string("{"))
     |> repeat(
       prom_key_value
@@ -105,8 +136,8 @@ defmodule PrometheusParser do
     |> ignore(string(" "))
     |> concat(prom_integer |> tag(:entry_value))
 
-  prom_entry_with_timestamp =
-    prom_entry
+  prom_entry_with_key_and_value_and_timestamp =
+    prom_entry_with_key_and_value
     |> ignore(string(" "))
     |> concat(prom_integer |> tag(:timestamp))
 
@@ -117,7 +148,9 @@ defmodule PrometheusParser do
       comment |> concat(type),
       comment |> concat(documentation),
       prom_entry_with_timestamp,
-      prom_entry
+      prom_entry,
+      prom_entry_with_key_and_value_and_timestamp,
+      prom_entry_with_key_and_value
     ])
   )
 

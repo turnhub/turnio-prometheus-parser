@@ -44,7 +44,32 @@ defmodule PrometheusParserTest do
              "# TYPE web_uptime gauge"
   end
 
-  test "parse entry" do
+  test "parse entry without key and value" do
+    assert parse("pending_messages 0") ==
+             %PrometheusParser.Line{
+               documentation: nil,
+               label: "pending_messages",
+               line_type: "ENTRY",
+               pairs: [],
+               timestamp: nil,
+               type: nil,
+               value: "0"
+             }
+  end
+
+  test "write entry without key and value" do
+    assert to_string(%PrometheusParser.Line{
+             documentation: nil,
+             label: "pending_messages",
+             line_type: "ENTRY",
+             pairs: [],
+             timestamp: nil,
+             type: nil,
+             value: "0"
+           }) == "pending_messages 0"
+  end
+
+  test "parse entry with key and value" do
     assert parse("web_connections{node=\"abc-123-def-0\"} 607180") ==
              %PrometheusParser.Line{
                documentation: nil,
@@ -57,7 +82,7 @@ defmodule PrometheusParserTest do
              }
   end
 
-  test "write entry" do
+  test "write entry with key and value" do
     assert to_string(%PrometheusParser.Line{
              documentation: nil,
              label: "web_connections",
