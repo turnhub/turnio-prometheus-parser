@@ -90,6 +90,19 @@ defmodule PrometheusParserTest do
               }}
   end
 
+  test "something" do
+    assert parse("out_message_sent_duration_ms_count{retry=\"0\",type=\"undefined\"} 2") ==
+             {:ok,
+              %PrometheusParser.Line{
+                label: "out_message_sent_duration_ms_count",
+                line_type: "ENTRY",
+                pairs: [{"retry", "0"}, {"type", "undefined"}],
+                timestamp: nil,
+                type: nil,
+                value: "2"
+              }}
+  end
+
   test "parse entry with key and value with colons and full stops" do
     assert parse("api_requests_coreapp_duration_ms_sum{app=\"127.0.0.1:6250\"} 122") ==
              {:ok,

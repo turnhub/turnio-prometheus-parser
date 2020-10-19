@@ -78,7 +78,7 @@ defmodule PrometheusParser do
     utf8_string([], min: 1)
     |> tag(:documentation)
 
-  prom_label = ascii_string([?a..?z] ++ [?_], min: 2)
+  prom_label = ascii_string([?a..?z] ++ [?_], min: 1)
 
   help =
     string("HELP")
@@ -105,7 +105,7 @@ defmodule PrometheusParser do
     prom_label
     |> tag(:pair_key)
     |> ignore(string("=\""))
-    |> ascii_string([?a..?z, ?A..?Z, ?0..?9, ?-..?-, ?_..?_, ?...?:], min: 2)
+    |> ascii_string([?a..?z, ?A..?Z, ?0..?9, ?-..?-, ?_..?_, ?...?:], min: 1)
     |> label("expected a-z,A-Z,0-9,\-")
     |> tag(:pair_value)
     |> ignore(string("\""))
