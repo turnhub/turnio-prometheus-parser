@@ -90,7 +90,20 @@ defmodule PrometheusParserTest do
               }}
   end
 
-  test "something" do
+  test "empty attributes" do
+    assert parse("out_message_sent_duration_ms_count{retry=\"0\",type=\"\"} 2") ==
+             {:ok,
+              %PrometheusParser.Line{
+                label: "out_message_sent_duration_ms_count",
+                line_type: "ENTRY",
+                pairs: [{"retry", "0"}, {"type", ""}],
+                timestamp: nil,
+                type: nil,
+                value: "2"
+              }}
+  end
+
+  test "multiple attributes without spaces" do
     assert parse("out_message_sent_duration_ms_count{retry=\"0\",type=\"undefined\"} 2") ==
              {:ok,
               %PrometheusParser.Line{

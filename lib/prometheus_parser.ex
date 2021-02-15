@@ -105,7 +105,7 @@ defmodule PrometheusParser do
     prom_label
     |> tag(:pair_key)
     |> ignore(string("=\""))
-    |> ascii_string([?a..?z, ?A..?Z, ?0..?9, ?-..?-, ?_..?_, ?...?:], min: 1)
+    |> optional(ascii_string([?a..?z, ?A..?Z, ?0..?9, ?-..?-, ?_..?_, ?...?:], min: 1))
     |> label("expected a-z,A-Z,0-9,\-")
     |> tag(:pair_value)
     |> ignore(string("\""))
@@ -198,6 +198,9 @@ defmodule PrometheusParser do
 
           {:documentation, [documentation]} ->
             %{acc | documentation: documentation}
+
+          {:pair_value, [{:pair_key, [key]}]} ->
+            %{acc | pairs: acc.pairs ++ [{key, ""}]}
 
           {:pair_value, [{:pair_key, [key]}, value]} ->
             %{acc | pairs: acc.pairs ++ [{key, value}]}
