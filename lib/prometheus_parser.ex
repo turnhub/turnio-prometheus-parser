@@ -78,7 +78,7 @@ defmodule PrometheusParser do
     utf8_string([], min: 1)
     |> tag(:documentation)
 
-  prom_label = ascii_string([?a..?z] ++ [?_], min: 1)
+  prom_label = ascii_string([?a..?z, ?A..?Z, ?_], min: 1)
 
   help =
     string("HELP")

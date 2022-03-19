@@ -177,6 +177,25 @@ defmodule PrometheusParserTest do
               }}
   end
 
+  test "parse entry with uppercase prom_label" do
+    assert parse(
+             ~s(node_memory_KReclaimable_bytes{supabase_project_ref="ixlqpcigbdlbmfnvzxtw",service_type="db"} 8.8190976e+07)
+           ) ==
+             {:ok,
+              %PrometheusParser.Line{
+                documentation: nil,
+                label: "node_memory_KReclaimable_bytes",
+                line_type: "ENTRY",
+                pairs: [
+                  {"supabase_project_ref", "ixlqpcigbdlbmfnvzxtw"},
+                  {"service_type", "db"}
+                ],
+                timestamp: nil,
+                type: nil,
+                value: "8.8190976e+07"
+              }}
+  end
+
   test "write entry with multiple keys and values" do
     assert to_string(%PrometheusParser.Line{
              documentation: nil,
