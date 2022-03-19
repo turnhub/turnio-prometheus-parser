@@ -157,6 +157,26 @@ defmodule PrometheusParserTest do
               }}
   end
 
+  test "parse entry with float value" do
+    assert parse(
+             ~s(pg_stat_statements_total_queries{supabase_project_ref="ixlqpcigbdlbmfnvzxtw",service_type="postgresql",server="localhost:5432"} 4.37379e+06)
+           ) ==
+             {:ok,
+              %PrometheusParser.Line{
+                documentation: nil,
+                label: "pg_stat_statements_total_queries",
+                line_type: "ENTRY",
+                pairs: [
+                  {"supabase_project_ref", "ixlqpcigbdlbmfnvzxtw"},
+                  {"service_type", "postgresql"},
+                  {"server", "localhost:5432"}
+                ],
+                timestamp: nil,
+                type: nil,
+                value: "4.37379e+06"
+              }}
+  end
+
   test "write entry with multiple keys and values" do
     assert to_string(%PrometheusParser.Line{
              documentation: nil,
