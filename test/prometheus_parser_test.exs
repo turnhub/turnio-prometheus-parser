@@ -50,12 +50,30 @@ defmodule PrometheusParserTest do
              "# TYPE web_uptime gauge"
   end
 
+  test "parse invalid label (cannot start with number)" do
+    assert parse("720_pending_messages 0") == {:error, "Unsupported syntax: \"720_pending_messages 0\""}
+  end
+
   test "parse entry without key and value" do
     assert parse("pending_messages 0") ==
              {:ok,
               %PrometheusParser.Line{
                 documentation: nil,
                 label: "pending_messages",
+                line_type: "ENTRY",
+                pairs: [],
+                timestamp: nil,
+                type: nil,
+                value: "0"
+              }}
+  end
+
+  test "parse entry with number in name without key and value" do
+    assert parse("pending_messages_360 0") ==
+             {:ok,
+              %PrometheusParser.Line{
+                documentation: nil,
+                label: "pending_messages_360",
                 line_type: "ENTRY",
                 pairs: [],
                 timestamp: nil,
