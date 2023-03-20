@@ -78,10 +78,10 @@ defmodule PrometheusParser do
     utf8_string([], min: 1)
     |> tag(:documentation)
 
-  prom_label = 
+  prom_label =
     ascii_char([?a..?z])
     |> lookahead()
-    |> ascii_string([?a..?z] ++ [?0..?9] ++ [?_], min: 1)
+    |> ascii_string([?a..?z, ?A..?Z] ++ [?0..?9] ++ [?_], min: 1)
 
   help =
     string("HELP")
