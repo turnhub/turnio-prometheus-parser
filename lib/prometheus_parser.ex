@@ -110,7 +110,7 @@ defmodule PrometheusParser do
     |> tag(:pair_value)
     |> ignore(string("\""))
 
-  prom_integer_or_float = ascii_string([?0..?9, ?e, ?., ?+, ?-], min: 1)
+  prom_integer_or_float = ascii_string([?0..?9, ?e, ?E, ?., ?+, ?-], min: 1)
 
   prom_entry =
     prom_label
