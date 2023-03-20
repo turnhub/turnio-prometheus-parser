@@ -78,9 +78,10 @@ defmodule PrometheusParser do
     utf8_string([], min: 1)
     |> tag(:documentation)
 
-  prom_label = ascii_char([?a..?z])
-  |> lookahead()
-  |> ascii_string([?a..?z] ++ [?0..?9] ++ [?_], min: 1)
+  prom_label = 
+    ascii_char([?a..?z])
+    |> lookahead()
+    |> ascii_string([?a..?z] ++ [?0..?9] ++ [?_], min: 1)
 
   help =
     string("HELP")
@@ -112,18 +113,18 @@ defmodule PrometheusParser do
     |> tag(:pair_value)
     |> ignore(string("\""))
 
-  prom_integer = ascii_string([?0..?9], min: 1)
+  prom_integer_or_float = ascii_string([?0..?9, ?e, ?E, ?., ?+, ?-], min: 1)
 
   prom_entry =
     prom_label
     |> tag(:prom_label)
     |> ignore(string(" "))
-    |> concat(prom_integer |> tag(:entry_value))
+    |> concat(prom_integer_or_float |> tag(:entry_value))
 
   prom_entry_with_timestamp =
     prom_entry
     |> ignore(string(" "))
-    |> concat(prom_integer |> tag(:timestamp))
+    |> concat(prom_integer_or_float |> tag(:timestamp))
 
   prom_entry_with_key_and_value =
     prom_label
@@ -136,12 +137,12 @@ defmodule PrometheusParser do
     )
     |> ignore(string("}"))
     |> ignore(string(" "))
-    |> concat(prom_integer |> tag(:entry_value))
+    |> concat(prom_integer_or_float |> tag(:entry_value))
 
   prom_entry_with_key_and_value_and_timestamp =
     prom_entry_with_key_and_value
     |> ignore(string(" "))
-    |> concat(prom_integer |> tag(:timestamp))
+    |> concat(prom_integer_or_float |> tag(:timestamp))
 
   unsupported =
     empty()
