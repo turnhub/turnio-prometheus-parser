@@ -51,7 +51,8 @@ defmodule PrometheusParserTest do
   end
 
   test "parse invalid label (cannot start with number)" do
-    assert parse("720_pending_messages 0") == {:error, "Unsupported syntax: \"720_pending_messages 0\""}
+    assert parse("720_pending_messages 0") ==
+             {:error, "Unsupported syntax: \"720_pending_messages 0\""}
   end
 
   test "parse entry without key and value" do
@@ -212,6 +213,48 @@ defmodule PrometheusParserTest do
                 timestamp: nil,
                 type: nil,
                 value: "4.37379E+06"
+              }}
+  end
+
+  test "with +Inf" do
+    assert parse(~s(cowboy_request_duration_milliseconds_bucket{le="+Inf"} 10)) ==
+             {:ok,
+              %PrometheusParser.Line{
+                line_type: "ENTRY",
+                timestamp: nil,
+                pairs: [{"le", "+Inf"}],
+                value: "10",
+                documentation: nil,
+                type: nil,
+                label: "cowboy_request_duration_milliseconds_bucket"
+              }}
+  end
+
+  test "with -Inf" do
+    assert parse(~s(cowboy_request_duration_milliseconds_bucket{le="-Inf"} 10)) ==
+             {:ok,
+              %PrometheusParser.Line{
+                line_type: "ENTRY",
+                timestamp: nil,
+                pairs: [{"le", "-Inf"}],
+                value: "10",
+                documentation: nil,
+                type: nil,
+                label: "cowboy_request_duration_milliseconds_bucket"
+              }}
+  end
+
+  test "with Inf" do
+    assert parse(~s(cowboy_request_duration_milliseconds_bucket{le="Inf"} 10)) ==
+             {:ok,
+              %PrometheusParser.Line{
+                line_type: "ENTRY",
+                timestamp: nil,
+                pairs: [{"le", "Inf"}],
+                value: "10",
+                documentation: nil,
+                type: nil,
+                label: "cowboy_request_duration_milliseconds_bucket"
               }}
   end
 
