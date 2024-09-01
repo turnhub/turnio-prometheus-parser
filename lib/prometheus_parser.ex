@@ -79,7 +79,7 @@ defmodule PrometheusParser do
     |> tag(:documentation)
 
   prom_label =
-    ascii_char([?a..?z])
+    ascii_char([?a..?z] ++ [?A..?Z] ++ [?_])
     |> lookahead()
     |> ascii_string([?a..?z, ?A..?Z] ++ [?0..?9] ++ [?_], min: 1)
 

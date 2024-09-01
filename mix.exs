@@ -4,7 +4,7 @@ defmodule PrometheusParser.MixProject do
   def project do
     [
       app: :prometheus_parser,
-      version: "0.1.9",
+      version: "0.1.11",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),

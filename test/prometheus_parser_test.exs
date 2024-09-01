@@ -316,4 +316,18 @@ defmodule PrometheusParserTest do
            }) ==
              "web_connections{node=\"abc-123-def-0\"} 607180 1234"
   end
+
+  test "parse label with single character name" do
+    assert parse(~s(f 1234)) ==
+      {:ok,
+        %PrometheusParser.Line{
+          documentation: nil,
+          label: "f",
+          line_type: "ENTRY",
+          pairs: [],
+          timestamp: nil,
+          type: nil,
+          value: "1234",
+        }}
+  end
 end
